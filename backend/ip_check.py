@@ -1,5 +1,14 @@
-def check_ip(ip):
-    print("checking ip:",ip)
-    return "ip check module working"
+import ipaddress
 
-print(check_ip("8.8.8.8"))
+
+def is_ip_address(hostname):
+    try:
+        ipaddress.ip_address(hostname)
+        return True
+    except ValueError:
+        return False
+
+
+# Tests
+print(is_ip_address("192.168.1.50"))
+print(is_ip_address("google.com"))
