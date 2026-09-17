@@ -191,3 +191,54 @@ print(analyze_domain_characters("google.com"))
 print(analyze_domain_characters(
     "google-login-security-928374.com"
 ))
+
+from difflib import SequenceMatcher
+
+def domain_similarity(domain, trusted_domain):
+    domain = domain.lower()
+    trusted_domain = trusted_domain.lower()
+
+    return SequenceMatcher(None, domain, trusted_domain).ratio()
+
+
+# Test
+print(domain_similarity("google.com", "google.com"))
+print(domain_similarity("gooogle.com", "google.com"))
+print(domain_similarity("randomsite.com", "google.com"))
+
+def has_suspicious_domain_pattern(domain):
+    domain = domain.lower()
+
+    suspicious_words = [
+        "login",
+        "verify",
+        "secure",
+        "account",
+        "update",
+        "security",
+        "password"
+    ]
+
+    word_count = 0
+
+    for word in suspicious_words:
+        if word in domain:
+            word_count += 1
+
+    hyphen_count = domain.count("-")
+    digit_count = sum(char.isdigit() for char in domain)
+
+    return word_count >= 2 and (hyphen_count >= 2 or digit_count >= 3)
+
+
+# Test
+print(has_suspicious_domain_pattern("google.com"))
+
+print(has_suspicious_domain_pattern(
+    "google-login-security-update.com"
+))
+
+print(has_suspicious_domain_pattern(
+    "secure-account-92837.com"
+))
+
