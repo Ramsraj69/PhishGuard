@@ -69,26 +69,29 @@ def calculate_risk_score(signals):
     }
 
 # ==============================
-# A9 BASIC TEST
+# A9 TEST
 # ==============================
 
-test_signals = {
-    "long_url": False,
-    "at_symbol": True,
-    "excessive_numbers": False,
-    "excessive_hyphens": False,
-    "encoded_characters": False,
-    "suspicious_keywords": False,
-    "ip_address": False,
-    "not_https": False,
-    "impersonation": False
-}
-result = calculate_risk_score(test_signals)
+if __name__ == "__main__":
 
-print("\n========== A9 LEGITIMATE URL TEST ==========\n")
-print("Risk Score:", result["risk_score"])
-print("Risk Level:", result["risk_level"])
-print("Reasons:")
+    test_signals = {
+        "long_url": False,
+        "at_symbol": True,
+        "excessive_numbers": False,
+        "excessive_hyphens": False,
+        "encoded_characters": False,
+        "suspicious_keywords": False,
+        "ip_address": False,
+        "not_https": False,
+        "impersonation": False
+    }
 
-for reason in result["reasons"]:
-    print("-", reason)
+    result = calculate_risk_score(test_signals)
+
+    print("\n========== A9 RISK ENGINE TEST ==========\n")
+    print("Risk Score:", result["risk_score"])
+    print("Risk Level:", result["risk_level"])
+    print("Reasons:")
+
+    for reason in result["reasons"]:
+        print("-", reason)

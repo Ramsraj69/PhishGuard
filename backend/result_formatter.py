@@ -40,8 +40,30 @@ test_result = {
 }
 
 formatted = format_result(test_result)
+# ==============================
+# A10 + A9 INTEGRATION TEST
+# ==============================
 
-print("\n========== A10 EXPLAINABLE RESULT ==========\n")
+from risk_engine import calculate_risk_score
+
+
+test_signals = {
+    "long_url": True,
+    "at_symbol": False,
+    "excessive_numbers": False,
+    "excessive_hyphens": False,
+    "encoded_characters": False,
+    "suspicious_keywords": True,
+    "ip_address": True,
+    "not_https": True,
+    "impersonation": True
+}
+
+risk_result = calculate_risk_score(test_signals)
+
+formatted = format_result(risk_result)
+
+print("\n========== A10 + A9 INTEGRATION TEST ==========\n")
 print("Risk Score:", formatted["risk_score"])
 print("Risk Level:", formatted["risk_level"])
 print("Message:", formatted["message"])
