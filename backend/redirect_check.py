@@ -3,38 +3,61 @@ import requests
 
 def check_redirects(url, max_redirects=5):
 
+    redirect_chain = []
+    current_url = url
+
     try:
-        response = requests.get(
-            url,
-            allow_redirects=True,
-            timeout=5
-        )
 
-        redirect_count = len(response.history)
+        for _ in range(max_redirects + 1):
 
-        if redirect_count > max_redirects:
-            return {
-                "redirect_count": redirect_count,
-                "redirect_chain": [r.url for r in response.history],
-                "final_url": response.url,
-                "too_many_redirects": True
-            }
+            response = requests.get(
+                current_url,
+                allow_redirects=False,
+                timeout=5
+            )
 
-        redirect_chain = [r.url for r in response.history]
-        redirect_chain.append(response.url)
+            redirect_chain.append(current_url)
+
+            # No redirect — final destination reached
+            if response.status_code not in [301, 302, 303, 307, 308]:
+
+                return {
+                    "redirect_count": len(redirect_chain) - 1,
+                    "redirect_chain": redirect_chain,
+                    "final_url": current_url,
+                    "too_many_redirects": False
+                }
+
+            # Get redirect destination
+            next_url = response.headers.get("Location")
+
+            if not next_url:
+
+                return {
+                    "redirect_count": len(redirect_chain) - 1,
+                    "redirect_chain": redirect_chain,
+                    "final_url": current_url,
+                    "too_many_redirects": False
+                }
+
+            # Move to the next URL
+            current_url = requests.compat.urljoin(
+                current_url,
+                next_url
+            )
 
         return {
-            "redirect_count": redirect_count,
+            "redirect_count": len(redirect_chain) - 1,
             "redirect_chain": redirect_chain,
-            "final_url": response.url,
-            "too_many_redirects": False
+            "final_url": current_url,
+            "too_many_redirects": True
         }
 
     except requests.RequestException as e:
 
         return {
-            "redirect_count": 0,
-            "redirect_chain": [],
+            "redirect_count": len(redirect_chain) - 1,
+            "redirect_chain": redirect_chain,
             "final_url": None,
             "too_many_redirects": False,
             "error": str(e)
@@ -43,11 +66,11 @@ def check_redirects(url, max_redirects=5):
 
 if __name__ == "__main__":
 
-    test_url = "https://www.google.com"
+    test_url = "http://localhost:8000/start"
 
     result = check_redirects(test_url)
 
-    print("\n========== A11 REDIRECT TEST ==========\n")
+    print("\n========== A11 SAFE REDIRECT TEST ==========\n")
     print("Redirect Count:", result["redirect_count"])
     print("Redirect Chain:")
 
@@ -55,9 +78,7 @@ if __name__ == "__main__":
         print("-", url)
 
     print("Final URL:", result["final_url"])
-
-    if result.get("too_many_redirects"):
-        print("WARNING: Too many redirects!")
+    print("Too Many Redirects:", result["too_many_redirects"])
 
     if result.get("error"):
         print("Error:", result["error"])
