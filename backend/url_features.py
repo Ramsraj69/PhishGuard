@@ -242,3 +242,7 @@ print(has_suspicious_domain_pattern(
     "secure-account-92837.com"
 ))
 
+print(domain_similarity("gooogle.com", "google.com"))
+print(domain_similarity("goog1e.com", "google.com"))
+print(domain_similarity("google.com", "google.com"))
+print(domain_similarity("randomsite.com", "google.com"))
