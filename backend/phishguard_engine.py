@@ -5,6 +5,7 @@ from https_check import uses_https
 from url_features import (
     is_long_url,
     has_at_symbol,
+    has_deceptive_at_pattern,
     has_excessive_numbers,
     has_excessive_hyphens,
     has_encoded_characters,
@@ -34,6 +35,7 @@ def analyze_url(url):
     url_features = {
         "long_url": is_long_url(url),
         "at_symbol": has_at_symbol(url),
+        "deceptive_at_pattern": has_deceptive_at_pattern(url),
         "excessive_numbers": has_excessive_numbers(url),
         "excessive_hyphens": has_excessive_hyphens(url),
         "encoded_characters": has_encoded_characters(url),
@@ -67,6 +69,7 @@ def analyze_url(url):
     signals = {
         "long_url": url_features["long_url"],
         "at_symbol": url_features["at_symbol"],
+        "deceptive_at_pattern": url_features["deceptive_at_pattern"],
         "excessive_numbers": url_features["excessive_numbers"],
         "excessive_hyphens": url_features["excessive_hyphens"],
         "encoded_characters": url_features["encoded_characters"],
@@ -106,7 +109,19 @@ if __name__ == "__main__":
 
     test_urls = [
         "https://google.com",
-        "http://malicious.example.com/login"
+        "http://malicious.example.com/login",
+        "https://example.com/google/login",
+        "https://example.com/account/update/security",
+        "https://google.com/account/verify/security",
+        "https://google.com.security-check.example.com/login/verify",
+        "https://gooogle.com/login/verify",
+        "https://google.com/security/account/login",
+        "https://google.com/account/login?verify=security&update=password",
+        "http://gooogle.com/login/verify/account",
+        "http://192.168.1.50/login/verify/account",
+        "http://google.com@evil-example.com/login",
+        "https://google.com@evil-example.com/login",
+        "https://google.com@evil-example.com/account/login"
     ]
 
     for test_url in test_urls:

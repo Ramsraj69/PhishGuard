@@ -7,8 +7,12 @@ def calculate_risk_score(signals):
         reasons.append("Unusually long URL")
 
     if signals.get("at_symbol"):
-        score += 15
+        score += 25
         reasons.append("URL contains @ symbol")
+        
+    if signals.get("deceptive_at_pattern"):
+        score += 20
+        reasons.append("Deceptive @ URL pattern detected")    
 
     if signals.get("encoded_characters"):
         score += 4

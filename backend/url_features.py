@@ -141,3 +141,23 @@ def has_suspicious_domain_pattern(domain):
     digit_count = sum(char.isdigit() for char in domain)
 
     return word_count >= 2 and (hyphen_count >= 2 or digit_count >= 3)
+
+def has_deceptive_at_pattern(url):
+    """
+    Detects URLs where text before @ resembles a domain
+    and the actual hostname is different.
+    """
+
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+
+    if "@" not in url:
+        return False
+
+    if parsed.hostname is None:
+        return False
+
+    userinfo = parsed.netloc.rsplit("@", 1)[0]
+
+    return "." in userinfo
