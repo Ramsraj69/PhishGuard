@@ -1,10 +1,23 @@
 import requests
+from url_security import validate_url_for_request
 
 
 def check_redirects(url, max_redirects=5):
 
     redirect_chain = []
     current_url = url
+
+    # Validate the initial URL before making a request
+    security_check = validate_url_for_request(current_url)
+
+    if not security_check["allowed"]:
+        return {
+            "redirect_count": 0,
+            "redirect_chain": [],
+            "final_url": None,
+            "too_many_redirects": False,
+            "error": security_check["reason"]
+        }
 
     try:
 
@@ -40,11 +53,25 @@ def check_redirects(url, max_redirects=5):
                     "too_many_redirects": False
                 }
 
-            # Move to the next URL
+            # Build the next absolute URL
             current_url = requests.compat.urljoin(
                 current_url,
                 next_url
             )
+
+            # Validate the redirect destination
+            security_check = validate_url_for_request(current_url)
+
+            if not security_check["allowed"]:
+                redirect_chain.append(current_url)
+
+                return {
+                    "redirect_count": len(redirect_chain) - 1,
+                    "redirect_chain": redirect_chain,
+                    "final_url": None,
+                    "too_many_redirects": False,
+                    "error": security_check["reason"]
+                }
 
         return {
             "redirect_count": len(redirect_chain) - 1,
@@ -70,8 +97,9 @@ if __name__ == "__main__":
 
     result = check_redirects(test_url)
 
-    print("\n========== A11 SAFE REDIRECT TEST ==========\n")
+    print("\n========== A18 SAFE REDIRECT TEST ==========\n")
     print("Redirect Count:", result["redirect_count"])
+
     print("Redirect Chain:")
 
     for url in result["redirect_chain"]:
