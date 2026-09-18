@@ -9,7 +9,7 @@ def calculate_risk_score(signals):
     if signals.get("at_symbol"):
         score += 25
         reasons.append("URL contains @ symbol")
-        
+
     if signals.get("deceptive_at_pattern"):
         score += 20
         reasons.append("Deceptive @ URL pattern detected")    
@@ -58,6 +58,10 @@ def calculate_risk_score(signals):
     if strong_signals >= 2:
         score += 10
         reasons.append("Multiple strong risk indicators detected")
+
+    if signals.get("unusual_port"):
+        score += 5
+        reasons.append("Unusual port detected")
 
     score = min(score, 100)
 

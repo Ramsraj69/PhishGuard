@@ -1,3 +1,4 @@
+from host_analysis import analyze_host
 from url_parser import parse_url
 from ip_check import is_ip_address
 from https_check import uses_https
@@ -26,11 +27,12 @@ def analyze_url(url):
     """
 
     parsed_url = parse_url(url)
-
     hostname = parsed_url["domain"]
 
     ip_address = is_ip_address(hostname)
     https = uses_https(url)
+
+    host_analysis = analyze_host(url)
 
     url_features = {
         "long_url": is_long_url(url),
@@ -70,6 +72,7 @@ def analyze_url(url):
         "long_url": url_features["long_url"],
         "at_symbol": url_features["at_symbol"],
         "deceptive_at_pattern": url_features["deceptive_at_pattern"],
+        "unusual_port": host_analysis["unusual_port"],
         "excessive_numbers": url_features["excessive_numbers"],
         "excessive_hyphens": url_features["excessive_hyphens"],
         "encoded_characters": url_features["encoded_characters"],
@@ -93,6 +96,7 @@ def analyze_url(url):
         "parsed_url": parsed_url,
         "ip_address": ip_address,
         "https": https,
+        "host_analysis": host_analysis,
         "url_features": url_features,
         "brand_analysis": brand_analysis,
         "redirect_analysis": redirect_analysis,
@@ -121,7 +125,8 @@ if __name__ == "__main__":
         "http://192.168.1.50/login/verify/account",
         "http://google.com@evil-example.com/login",
         "https://google.com@evil-example.com/login",
-        "https://google.com@evil-example.com/account/login"
+        "https://google.com@evil-example.com/account/login",
+            "https://example.com:4444/login"
     ]
 
     for test_url in test_urls:
