@@ -6,6 +6,3 @@ def uses_https(url):
     return parsed.scheme.lower() == "https"
 
 
-# Tests
-print(uses_https("https://google.com"))
-print(uses_https("http://google.com"))

@@ -41,6 +41,9 @@ def calculate_risk_score(signals):
     if signals.get("known_malicious"):
         score += 40
         reasons.append("URL found in reputation database")
+    if signals.get("downgrade"):
+        score += 15
+        reasons.append("HTTPS connection downgraded to HTTP")    
 
     strong_signals = sum([
         bool(signals.get("ip_address")),
@@ -98,7 +101,13 @@ if __name__ == "__main__":
             "signals": {
                 "known_malicious": True
             }
-        }
+        },
+        {
+    "name": "HTTPS downgrade",
+    "signals": {
+        "downgrade": True
+    }
+}
     ]
 
     for test in test_cases:

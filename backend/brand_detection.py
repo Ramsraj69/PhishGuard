@@ -2,6 +2,7 @@ from url_features import domain_similarity
 from urllib.parse import urlparse
 import tldextract
 
+
 # ==========================================
 # A8.1 - Get Hostname
 # ==========================================
@@ -200,87 +201,78 @@ def analyze_brand_impersonation(url):
 # TESTS
 # ==========================================
 
-print("\n========== A8 ADVERSARIAL TESTS ==========\n")
+if __name__ == "__main__":
 
-test_urls = [
-    # Legitimate
-    "https://google.com",
-    "https://accounts.google.com/login",
-    "https://microsoft.com",
-    "https://paypal.com",
+    print("\n========== A8 ADVERSARIAL TESTS ==========\n")
 
-    # Hidden brand
-    "https://google.com.security-check.example.com/login",
-    "https://secure.google.example.com/login",
+    test_urls = [
+        "https://google.com",
+        "https://accounts.google.com/login",
+        "https://microsoft.com",
+        "https://paypal.com",
 
-    # Lookalikes
-    "https://gooogle.com/login",
-    "https://goog1e.com/login",
-    "https://g00gle.com/login",
-    "https://paypa1.com/login",
+        "https://google.com.security-check.example.com/login",
+        "https://secure.google.example.com/login",
 
-    # Brand + hyphen
-    "https://google-login.com",
-    "https://google-secure.com",
-    "https://paypal-login.com",
-    "https://microsoft-security.com",
+        "https://gooogle.com/login",
+        "https://goog1e.com/login",
+        "https://g00gle.com/login",
+        "https://paypa1.com/login",
 
-    # Brand in deeper subdomain
-    "https://login.google.security.example.com",
-    "https://account.paypal.verify.example.com",
+        "https://google-login.com",
+        "https://google-secure.com",
+        "https://paypal-login.com",
+        "https://microsoft-security.com",
 
-    # Random
-    "https://mycollege.com/login",
-    "https://shopping-example.com"
-]
+        "https://login.google.security.example.com",
+        "https://account.paypal.verify.example.com",
 
+        "https://mycollege.com/login",
+        "https://shopping-example.com"
+    ]
 
-for url in test_urls:
-    print("\nURL:", url)
-    print(analyze_brand_impersonation(url))
+    for url in test_urls:
+        print("\nURL:", url)
+        print(analyze_brand_impersonation(url))
 
 
-print("\n========== LOOKALIKE TESTS ==========\n")
+    print("\n========== LOOKALIKE TESTS ==========\n")
+
+    print("Google:", find_lookalike_brands("google.com"))
+    print("Gooogle:", find_lookalike_brands("gooogle.com"))
+    print("Goog1e:", find_lookalike_brands("goog1e.com"))
+    print("G00gle:", find_lookalike_brands("g00gle.com"))
+    print("Random:", find_lookalike_brands("randomsite.com"))
 
 
-print("Google:", find_lookalike_brands("google.com"))
+    print("\n========== PUNYCODE TESTS ==========\n")
 
-print("Gooogle:", find_lookalike_brands("gooogle.com"))
+    print(
+        "Punycode test 1:",
+        has_punycode("xn--google-example.com")
+    )
 
-print("Goog1e:", find_lookalike_brands("goog1e.com"))
-
-print("G00gle:", find_lookalike_brands("g00gle.com"))
-
-print("Random:", find_lookalike_brands("randomsite.com"))
-
-
-print("\n========== PUNYCODE TESTS ==========\n")
+    print(
+        "Punycode test 2:",
+        has_punycode("google.com")
+    )
 
 
-print(
-    "Punycode test 1:",
-    has_punycode("xn--google-example.com")
-)
+    print("\n========== A8.9 DOMAIN EXTRACTION TESTS ==========\n")
 
-print(
-    "Punycode test 2:",
-    has_punycode("google.com"))
+    domain_test_urls = [
+        "https://example.co.uk/login",
+        "https://secure.example.co.uk/account",
+        "https://example.com.au/login",
+        "https://college.ac.in/login",
+        "https://accounts.google.com/login",
+        "https://google.com.security-check.example.com/login"
+    ]
 
-print("\n========== A8.9 DOMAIN EXTRACTION TESTS ==========\n")
+    for url in domain_test_urls:
+        hostname = get_hostname(url)
 
-domain_test_urls = [
-    "https://example.co.uk/login",
-    "https://secure.example.co.uk/account",
-    "https://example.com.au/login",
-    "https://college.ac.in/login",
-    "https://accounts.google.com/login",
-    "https://google.com.security-check.example.com/login"
-]
-
-for url in domain_test_urls:
-    hostname = get_hostname(url)
-
-    print("URL:", url)
-    print("Hostname:", hostname)
-    print("Real domain:", get_real_domain(hostname))
-    print()
+        print("URL:", url)
+        print("Hostname:", hostname)
+        print("Real domain:", get_real_domain(hostname))
+        print()

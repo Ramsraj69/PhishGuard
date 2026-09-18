@@ -14,8 +14,4 @@ def parse_url(url):
 
 
 # Test URL
-url = "https://login.example.com/account?id=123"
 
-result = parse_url(url)
-
-print(result)
