@@ -130,7 +130,34 @@ def find_lookalike_brands(real_domain):
 # ==========================================
 # A8.7 - Punycode Detection
 # ==========================================
+def decode_idn_hostname(hostname):
+    if hostname is None:
+        return None
 
+    try:
+        return hostname.encode("ascii").decode("idna")
+    except (UnicodeError, UnicodeEncodeError):
+        return hostname
+
+def has_unicode_confusable(hostname):
+    if hostname is None:
+        return False
+
+    confusable_characters = {
+        "а",  # Cyrillic a
+        "е",  # Cyrillic e
+        "о",  # Cyrillic o
+        "р",  # Cyrillic p
+        "с",  # Cyrillic c
+        "х",  # Cyrillic x
+        "і",  # Cyrillic i
+        "ј",  # Cyrillic j
+        "ѕ",  # Cyrillic s
+        "у",  # Cyrillic y
+    }
+
+    return any(char in confusable_characters for char in hostname)
+    
 def has_punycode(hostname):
     if hostname is None:
         return False
@@ -147,6 +174,11 @@ def has_punycode(hostname):
 def analyze_brand_impersonation(url):
 
     hostname = get_hostname(url)
+    decoded_hostname = decode_idn_hostname(hostname)
+    unicode_confusable = has_unicode_confusable(decoded_hostname)
+
+    print("Original hostname:", hostname)
+    print("Decoded hostname:", decoded_hostname)
 
     # Invalid URL / no hostname
     if hostname is None:
@@ -156,14 +188,15 @@ def analyze_brand_impersonation(url):
             "suspicious_brands": [],
             "lookalike_brands": [],
             "punycode": False,
+            "unicode_confusable": False,
             "impersonation": False
         }
 
     # Find brands mentioned in hostname
-    claimed_brands = find_claimed_brands(hostname)
+    claimed_brands = find_claimed_brands(decoded_hostname)
 
-    # Find actual domain
-    real_domain = get_real_domain(hostname)
+    # Find actual registrable domain
+    real_domain = get_real_domain(decoded_hostname)
 
     # Check whether claimed brand actually owns the domain
     suspicious_brands = []
@@ -185,6 +218,7 @@ def analyze_brand_impersonation(url):
     impersonation = (
         len(suspicious_brands) > 0
         or len(lookalike_brands) > 0
+        or unicode_confusable
     )
 
     return {
@@ -193,9 +227,9 @@ def analyze_brand_impersonation(url):
         "suspicious_brands": suspicious_brands,
         "lookalike_brands": lookalike_brands,
         "punycode": punycode_detected,
+        "unicode_confusable": unicode_confusable,
         "impersonation": impersonation
     }
-
 
 # ==========================================
 # TESTS

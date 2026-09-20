@@ -1,10 +1,8 @@
 from urllib.parse import urlparse
+import tldextract
 
 
 def analyze_destination(original_url, final_url):
-    """
-    Compares the original URL with the final destination URL.
-    """
 
     if not original_url or not final_url:
         return {
@@ -35,7 +33,19 @@ def analyze_destination(original_url, final_url):
         }
 
     destination_changed = original_url != final_url
-    domain_changed = original_domain.lower() != final_domain.lower()
+
+    original_registered = (
+        tldextract.extract(original_domain).registered_domain
+    )
+
+    final_registered = (
+        tldextract.extract(final_domain).registered_domain
+    )
+
+    domain_changed = (
+        original_registered.lower()
+        != final_registered.lower()
+    )
 
     return {
         "original_url": original_url,
@@ -45,58 +55,3 @@ def analyze_destination(original_url, final_url):
         "destination_changed": destination_changed,
         "domain_changed": domain_changed
     }
-
-
-if __name__ == "__main__":
-
-    print("\n========== A13 DESTINATION ANALYSIS TEST ==========\n")
-
-    test_cases = [
-        {
-            "original": "https://example.com",
-            "final": "https://example.com"
-        },
-        {
-            "original": "https://short.example/start",
-            "final": "https://google.com/login"
-        },
-        {
-            "original": "http://example.com",
-            "final": "https://example.com"
-        },
-        {
-            "original": "https://example.com",
-            "final": ""
-        },
-        {
-            "original": "",
-            "final": "https://google.com"
-        },
-        {
-            "original": "not-a-valid-url",
-            "final": "https://google.com"
-        },
-        {
-            "original": "https://example.com",
-            "final": "not-a-valid-url"
-        }
-    ]
-
-    for test in test_cases:
-
-        result = analyze_destination(
-            test["original"],
-            test["final"]
-        )
-
-        print("Original URL:", result["original_url"])
-        print("Final URL:", result["final_url"])
-        print("Original Domain:", result["original_domain"])
-        print("Final Domain:", result["final_domain"])
-        print("Destination Changed:", result["destination_changed"])
-        print("Domain Changed:", result["domain_changed"])
-
-        if result.get("error"):
-            print("Error:", result["error"])
-
-        print("\n" + "-" * 50 + "\n")

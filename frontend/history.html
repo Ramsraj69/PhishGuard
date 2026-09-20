@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard | Scan History</title>
+
+    <link rel="stylesheet" href="style.css">
+
+
+    <!-- =====================================================
+         HISTORY PAGE STYLES
+         ===================================================== -->
+
+    <style>
+
+        /* -----------------------------------------
+           HISTORY LIST
+           ----------------------------------------- */
+
+        .history-list {
+            width: 100%;
+        }
+
+
+        /* -----------------------------------------
+           HISTORY ROW
+           ----------------------------------------- */
+
+        .history-row {
+
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 2.8fr)
+                100px
+                120px
+                190px;
+
+            align-items: center;
+
+            gap: 20px;
+
+            width: 100%;
+
+            padding: 20px 24px;
+
+            border-bottom: 1px solid
+                rgba(255, 255, 255, 0.06);
+
+            background: rgba(255, 255, 255, 0.015);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+
+        }
+
+
+        .history-row:hover {
+
+            background:
+                rgba(255, 255, 255, 0.045);
+
+        }
+
+
+        .history-row:last-child {
+
+            border-bottom: none;
+
+        }
+
+
+        /* -----------------------------------------
+           URL
+           ----------------------------------------- */
+
+        .history-url {
+
+            min-width: 0;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+            white-space: nowrap;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            color: var(--text-primary, #ffffff);
+
+        }
+
+
+        /* -----------------------------------------
+           RISK
+           ----------------------------------------- */
+
+        .history-risk {
+
+            font-weight: 700;
+
+            font-size: 15px;
+
+            text-align: center;
+
+            color: var(--text-primary, #ffffff);
+
+        }
+
+
+        /* -----------------------------------------
+           STATUS
+           ----------------------------------------- */
+
+        .history-status {
+
+            display: inline-flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            min-width: 82px;
+
+            padding: 7px 12px;
+
+            border-radius: 4px;
+
+            font-size: 11px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.08em;
+
+            text-align: center;
+
+            background:
+                rgba(255, 255, 255, 0.06);
+
+            color: var(--text-primary, #ffffff);
+
+        }
+
+
+        /* -----------------------------------------
+           TIME
+           ----------------------------------------- */
+
+        .history-time {
+
+            font-size: 12px;
+
+            color: var(--text-secondary, #8d96a8);
+
+            white-space: nowrap;
+
+        }
+
+
+        /* -----------------------------------------
+           EMPTY STATE
+           ----------------------------------------- */
+
+        .history-list .empty-activity {
+
+            border: none;
+
+        }
+
+
+        /* -----------------------------------------
+           MOBILE / SMALL SCREEN
+           ----------------------------------------- */
+
+        @media (max-width: 850px) {
+
+            .history-row {
+
+                grid-template-columns:
+                    1fr
+                    80px
+                    110px
+                    1fr;
+
+                gap: 12px;
+
+                padding: 18px;
+
+            }
+
+            .history-url {
+
+                grid-column: 1 / -1;
+
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .history-row {
+
+                grid-template-columns: 1fr;
+
+                gap: 10px;
+
+            }
+
+            .history-url {
+
+                grid-column: auto;
+
+                white-space: normal;
+
+                overflow-wrap: anywhere;
+
+            }
+
+            .history-risk,
+            .history-status,
+            .history-time {
+
+                text-align: left;
+
+                justify-content: flex-start;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="app-shell">
+
+
+        <!-- =========================================
+             SIDEBAR
+             ========================================= -->
+
+        <aside class="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    🛡️
+                </div>
+
+                <div>
+
+                    <h1>PhishGuard</h1>
+
+                    <span>
+                        Security Intelligence
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="navigation">
+
+                <p class="nav-title">
+                    COMMAND CENTER
+                </p>
+
+
+                <a
+                    href="index.html"
+                    class="nav-item">
+
+                    <span>◈</span>
+                    Dashboard
+
+                </a>
+
+
+                <a
+                    href="analyze.html"
+                    class="nav-item">
+
+                    <span>⌕</span>
+                    Analyze URL
+
+                </a>
+
+
+                <a
+                    href="history.html"
+                    class="nav-item active">
+
+                    <span>◷</span>
+                    Scan History
+
+                </a>
+
+
+                <a
+                    href="reports.html"
+                    class="nav-item">
+
+                    <span>▤</span>
+                    Security Reports
+
+                </a>
+
+
+                <p class="nav-title secondary-nav-title">
+                    SYSTEM
+                </p>
+
+
+                <a
+                    href="about.html"
+                    class="nav-item">
+
+                    <span>ⓘ</span>
+                    About PhishGuard
+
+                </a>
+
+            </nav>
+
+
+            <div class="system-status">
+
+                <div class="status-dot"></div>
+
+                <div>
+
+                    <strong>
+                        System Online
+                    </strong>
+
+                    <small>
+                        Protection engine active
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="sidebar-footer">
+                CYBERCLASH 2026
+            </div>
+
+        </aside>
+
+
+        <!-- =========================================
+             MAIN CONTENT
+             ========================================= -->
+
+        <main class="main-content">
+
+
+            <!-- TOP BAR -->
+
+            <header class="topbar">
+
+                <div>
+
+                    <span class="page-kicker">
+                        INVESTIGATION LOG
+                    </span>
+
+                    <h2>
+                        Scan History
+                    </h2>
+
+                </div>
+
+
+                <div class="topbar-status">
+
+                    <span class="live-indicator"></span>
+
+                    LOCAL SECURITY LOG
+
+                </div>
+
+            </header>
+
+
+            <!-- =========================================
+                 HERO
+                 ========================================= -->
+
+            <section class="hero-section">
+
+                <div class="hero-content">
+
+                    <span class="hero-label">
+                        SECURITY INVESTIGATIONS
+                    </span>
+
+
+                    <h3>
+
+                        Review previous
+                        <br>
+                        URL investigations.
+
+                    </h3>
+
+
+                    <p>
+
+                        View previously analyzed URLs, their risk
+                        levels, reputation status, and investigation
+                        timestamps.
+
+                    </p>
+
+
+                    <div class="hero-actions">
+
+                        <a
+                            href="analyze.html"
+                            class="primary-action">
+
+                            ANALYZE NEW URL
+
+                            <span>→</span>
+
+                        </a>
+
+
+                        <button
+                            id="clearHistoryButton"
+                            class="secondary-action"
+                            type="button">
+
+                            CLEAR HISTORY
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="hero-shield">
+
+                    <div class="shield-ring">
+
+                        <div class="shield-symbol">
+                            ◷
+                        </div>
+
+                    </div>
+
+
+                    <span>
+
+                        SCAN
+                        <br>
+                        HISTORY
+
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 HISTORY OVERVIEW
+                 ========================================= -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span>
+                            HISTORY OVERVIEW
+                        </span>
+
+                        <h3>
+                            Investigation Statistics
+                        </h3>
+
+                    </div>
+
+
+                    <span class="section-live">
+
+                        ● LOCAL DATA
+
+                    </span>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-icon">
+                            ⌕
+                        </span>
+
+                        <div>
+
+                            <small>
+                                TOTAL SCANS
+                            </small>
+
+                            <strong id="totalScans">
+                                0
+                            </strong>
+
+                        </div>
+
+                        <span class="stat-note">
+                            Recorded
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card threat-stat">
+
+                        <span class="stat-icon">
+                            ⚠
+                        </span>
+
+                        <div>
+
+                            <small>
+                                THREATS DETECTED
+                            </small>
+
+                            <strong id="threatScans">
+                                0
+                            </strong>
+
+                        </div>
+
+                        <span class="stat-note">
+                            Medium / High
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card safe-stat">
+
+                        <span class="stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+
+                            <small>
+                                LOW RISK
+                            </small>
+
+                            <strong id="safeScans">
+                                0
+                            </strong>
+
+                        </div>
+
+                        <span class="stat-note">
+                            Low risk
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <span class="stat-icon">
+                            ◉
+                        </span>
+
+                        <div>
+
+                            <small>
+                                ENGINE
+                            </small>
+
+                            <strong>
+                                READY
+                            </strong>
+
+                        </div>
+
+                        <span class="stat-note">
+                            Operational
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 HISTORY TABLE
+                 ========================================= -->
+
+            <section class="section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span>
+                            SECURITY TELEMETRY
+                        </span>
+
+                        <h3>
+                            Investigation Log
+                        </h3>
+
+                    </div>
+
+
+                    <span
+                        id="historyCount"
+                        class="section-live">
+
+                        0 SCANS
+
+                    </span>
+
+                </div>
+
+
+                <div class="activity-table">
+
+
+                    <!-- TABLE HEADER -->
+
+                    <div class="activity-header">
+
+                        <span>
+                            URL / TARGET
+                        </span>
+
+                        <span>
+                            RISK
+                        </span>
+
+                        <span>
+                            STATUS
+                        </span>
+
+                        <span>
+                            TIME
+                        </span>
+
+                    </div>
+
+
+                    <!-- HISTORY DATA -->
+
+                    <div
+                        id="historyList"
+                        class="history-list">
+
+                        <div class="empty-activity">
+
+                            <div class="empty-icon">
+                                ◷
+                            </div>
+
+                            <strong>
+                                No investigations yet
+                            </strong>
+
+                            <p>
+                                Your analyzed URLs will appear here.
+                            </p>
+
+                            <a href="analyze.html">
+                                Run your first scan →
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
+                 FOOTER
+                 ========================================= -->
+
+            <footer class="main-footer">
+
+                <span>
+                    PhishGuard Security Intelligence Platform
+                </span>
+
+                <span>
+                    CyberClash 2026
+                </span>
+
+            </footer>
+
+        </main>
+
+    </div>
+
+
+    <script src="history.js"></script>
+
+</body>
+
+</html>

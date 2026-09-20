@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        PhishGuard | URL Security Analyzer
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+
+    <!-- =====================================================
+         PROTECTION / REPORT LAYOUT OVERRIDES
+         ===================================================== -->
+
+    <style>
+
+        /* =================================================
+           PROTECTION ENGINE
+           ================================================= */
+
+        .protection-engine-section {
+            position: relative;
+        }
+
+
+        .protection-action-panel {
+            display: grid !important;
+
+            grid-template-columns:
+                72px minmax(0, 1fr) 150px !important;
+
+            align-items: center !important;
+
+            gap: 24px !important;
+
+            width: 100% !important;
+
+            min-height: 150px !important;
+
+            padding: 24px 26px !important;
+
+            margin-top: 16px !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(11, 20, 31, 0.98),
+                    rgba(7, 14, 23, 0.98)
+                ) !important;
+
+            border:
+                1px solid #26374a !important;
+
+            border-radius: 18px !important;
+
+            box-shadow:
+                0 12px 35px rgba(0, 0, 0, 0.18) !important;
+
+            overflow: hidden !important;
+
+            transition:
+                border-color 0.25s ease,
+                box-shadow 0.25s ease,
+                transform 0.25s ease !important;
+        }
+
+
+        .protection-action-panel:hover {
+            border-color: #38536e !important;
+
+            box-shadow:
+                0 16px 42px rgba(0, 0, 0, 0.24) !important;
+
+            transform:
+                translateY(-1px) !important;
+        }
+
+
+        /* =================================================
+           PROTECTION ICON
+           ================================================= */
+
+        .protection-action-icon {
+            width: 64px !important;
+
+            height: 64px !important;
+
+            display: flex !important;
+
+            align-items: center !important;
+
+            justify-content: center !important;
+
+            border-radius: 16px !important;
+
+            background:
+                rgba(56, 189, 248, 0.08) !important;
+
+            border:
+                1px solid rgba(56, 189, 248, 0.22) !important;
+
+            font-size: 28px !important;
+
+            line-height: 1 !important;
+
+            flex-shrink: 0 !important;
+        }
+
+
+        /* =================================================
+           PROTECTION CONTENT
+           ================================================= */
+
+        .protection-action-content {
+            min-width: 0 !important;
+        }
+
+
+        .protection-action-content > span {
+            display: block !important;
+
+            margin-bottom: 5px !important;
+
+            color: #7dd3fc !important;
+
+            font-size: 10px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.14em !important;
+        }
+
+
+        .protection-action-content h3 {
+            margin: 0 0 6px !important;
+
+            font-size: 30px !important;
+
+            line-height: 1.05 !important;
+
+            font-weight: 850 !important;
+
+            letter-spacing: 0.04em !important;
+
+            color: #f8fafc !important;
+        }
+
+
+        .protection-action-content p {
+            margin: 0 !important;
+
+            max-width: 620px !important;
+
+            color: #94a3b8 !important;
+
+            font-size: 13px !important;
+
+            line-height: 1.55 !important;
+        }
+
+
+        /* =================================================
+           PROTECTION SEVERITY
+           ================================================= */
+
+        .protection-severity {
+            min-width: 0 !important;
+
+            padding-left: 22px !important;
+
+            border-left:
+                1px solid #26374a !important;
+        }
+
+
+        .protection-severity small {
+            display: block !important;
+
+            margin-bottom: 6px !important;
+
+            color: #64748b !important;
+
+            font-size: 9px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.14em !important;
+        }
+
+
+        .protection-severity strong {
+            display: block !important;
+
+            color: #fbbf24 !important;
+
+            font-size: 16px !important;
+
+            font-weight: 850 !important;
+
+            letter-spacing: 0.08em !important;
+        }
+
+
+        /* =================================================
+           ALLOW STATE
+           ================================================= */
+
+        .protection-action-panel.protection-allow {
+            border-color:
+                rgba(34, 197, 94, 0.38) !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(10, 31, 23, 0.98),
+                    rgba(7, 18, 14, 0.98)
+                ) !important;
+        }
+
+
+        .protection-action-panel.protection-allow
+        .protection-action-icon {
+            background:
+                rgba(34, 197, 94, 0.10) !important;
+
+            border-color:
+                rgba(34, 197, 94, 0.30) !important;
+        }
+
+
+        .protection-action-panel.protection-allow
+        .protection-action-content > span {
+            color: #4ade80 !important;
+        }
+
+
+        .protection-action-panel.protection-allow
+        .protection-action-content h3 {
+            color: #4ade80 !important;
+        }
+
+
+        .protection-action-panel.protection-allow
+        .protection-severity strong {
+            color: #4ade80 !important;
+        }
+
+
+        /* =================================================
+           WARN STATE
+           ================================================= */
+
+        .protection-action-panel.protection-warn {
+            border-color:
+                rgba(251, 191, 36, 0.38) !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37, 28, 9, 0.98),
+                    rgba(20, 16, 7, 0.98)
+                ) !important;
+        }
+
+
+        .protection-action-panel.protection-warn
+        .protection-action-icon {
+            background:
+                rgba(251, 191, 36, 0.09) !important;
+
+            border-color:
+                rgba(251, 191, 36, 0.25) !important;
+        }
+
+
+        .protection-action-panel.protection-warn
+        .protection-action-content > span {
+            color: #fbbf24 !important;
+        }
+
+
+        .protection-action-panel.protection-warn
+        .protection-action-content h3 {
+            color: #fbbf24 !important;
+        }
+
+
+        /* =================================================
+           BLOCK STATE
+           ================================================= */
+
+        .protection-action-panel.protection-block {
+            border-color:
+                rgba(248, 113, 113, 0.42) !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(39, 15, 18, 0.98),
+                    rgba(22, 9, 12, 0.98)
+                ) !important;
+        }
+
+
+        .protection-action-panel.protection-block
+        .protection-action-icon {
+            background:
+                rgba(248, 113, 113, 0.09) !important;
+
+            border-color:
+                rgba(248, 113, 113, 0.28) !important;
+        }
+
+
+        .protection-action-panel.protection-block
+        .protection-action-content > span {
+            color: #f87171 !important;
+        }
+
+
+        .protection-action-panel.protection-block
+        .protection-action-content h3 {
+            color: #f87171 !important;
+        }
+
+
+        .protection-action-panel.protection-block
+        .protection-severity strong {
+            color: #f87171 !important;
+        }
+
+
+        /* =================================================
+           PROTECTION STATUS LABEL
+           ================================================= */
+
+        #protectionStatusLabel {
+            white-space: nowrap !important;
+        }
+
+
+        /* =================================================
+           PROTECTION DISCLAIMER
+           ================================================= */
+
+        .protection-disclaimer {
+            display: flex !important;
+
+            align-items: flex-start !important;
+
+            gap: 16px !important;
+
+            margin-top: 10px !important;
+
+            padding: 14px 18px !important;
+
+            background:
+                rgba(8, 15, 24, 0.72) !important;
+
+            border:
+                1px solid #1d2a3a !important;
+
+            border-radius: 12px !important;
+        }
+
+
+        .protection-disclaimer > span {
+            flex-shrink: 0 !important;
+
+            color: #64748b !important;
+
+            font-size: 9px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.12em !important;
+
+            padding-top: 2px !important;
+        }
+
+
+        .protection-disclaimer p {
+            margin: 0 !important;
+
+            color: #64748b !important;
+
+            font-size: 11px !important;
+
+            line-height: 1.5 !important;
+        }
+
+
+        /* =================================================
+           SECURITY REPORT CARD
+           ================================================= */
+
+        .security-report-panel {
+            display: flex !important;
+
+            align-items: center !important;
+
+            justify-content: space-between !important;
+
+            gap: 28px !important;
+
+            width: 100% !important;
+
+            margin-top: 20px !important;
+
+            padding: 22px 24px !important;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(10, 20, 32, 0.98),
+                    rgba(7, 15, 24, 0.98)
+                ) !important;
+
+            border:
+                1px solid #26374a !important;
+
+            border-radius: 16px !important;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.16) !important;
+        }
+
+
+        .security-report-content {
+            display: flex !important;
+
+            align-items: center !important;
+
+            gap: 16px !important;
+
+            min-width: 0 !important;
+        }
+
+
+        .security-report-icon {
+            width: 48px !important;
+
+            height: 48px !important;
+
+            min-width: 48px !important;
+
+            display: flex !important;
+
+            align-items: center !important;
+
+            justify-content: center !important;
+
+            border-radius: 13px !important;
+
+            background:
+                rgba(34, 197, 94, 0.08) !important;
+
+            border:
+                1px solid rgba(34, 197, 94, 0.22) !important;
+
+            color: #4ade80 !important;
+
+            font-size: 21px !important;
+        }
+
+
+        .security-report-content > div:last-child {
+            min-width: 0 !important;
+        }
+
+
+        .security-report-content span {
+            display: block !important;
+
+            margin-bottom: 3px !important;
+
+            color: #4ade80 !important;
+
+            font-size: 9px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.13em !important;
+        }
+
+
+        .security-report-content h3 {
+            margin: 0 0 5px !important;
+
+            color: #e8edf5 !important;
+
+            font-size: 17px !important;
+
+            line-height: 1.25 !important;
+        }
+
+
+        .security-report-content p {
+            max-width: 680px !important;
+
+            margin: 0 !important;
+
+            color: #7f91a7 !important;
+
+            font-size: 11px !important;
+
+            line-height: 1.5 !important;
+        }
+
+
+        /* =================================================
+           REPORT BUTTON
+           ================================================= */
+
+        .report-button {
+            flex-shrink: 0 !important;
+
+            min-width: 205px !important;
+
+            padding: 13px 18px !important;
+
+            border:
+                1px solid rgba(34, 197, 94, 0.45) !important;
+
+            border-radius: 10px !important;
+
+            background:
+                rgba(34, 197, 94, 0.08) !important;
+
+            color: #86efac !important;
+
+            font-size: 10px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.07em !important;
+
+            cursor: pointer !important;
+
+            transition:
+                all 0.2s ease !important;
+        }
+
+
+        .report-button:hover:not(:disabled) {
+            background:
+                rgba(34, 197, 94, 0.14) !important;
+
+            border-color:
+                rgba(34, 197, 94, 0.70) !important;
+
+            transform:
+                translateY(-1px) !important;
+
+            box-shadow:
+                0 8px 20px rgba(34, 197, 94, 0.08) !important;
+        }
+
+
+        .report-button:disabled {
+            opacity: 0.35 !important;
+
+            cursor: not-allowed !important;
+        }
+
+
+        /* =================================================
+           RECOMMENDATION CARD
+           ================================================= */
+
+        .recommendation-panel {
+            display: flex !important;
+
+            align-items: center !important;
+
+            gap: 16px !important;
+
+            margin-top: 12px !important;
+
+            padding: 18px 20px !important;
+
+            background:
+                rgba(8, 15, 24, 0.72) !important;
+
+            border:
+                1px solid #1d2a3a !important;
+
+            border-radius: 14px !important;
+        }
+
+
+        .recommendation-icon {
+            width: 42px !important;
+
+            height: 42px !important;
+
+            min-width: 42px !important;
+
+            display: flex !important;
+
+            align-items: center !important;
+
+            justify-content: center !important;
+
+            border-radius: 11px !important;
+
+            background:
+                rgba(56, 189, 248, 0.07) !important;
+
+            border:
+                1px solid rgba(56, 189, 248, 0.16) !important;
+
+            font-size: 19px !important;
+        }
+
+
+        .recommendation-panel > div:last-child {
+            min-width: 0 !important;
+        }
+
+
+        .recommendation-panel span {
+            display: block !important;
+
+            margin-bottom: 3px !important;
+
+            color: #64748b !important;
+
+            font-size: 9px !important;
+
+            font-weight: 800 !important;
+
+            letter-spacing: 0.12em !important;
+        }
+
+
+        .recommendation-panel h3 {
+            margin: 0 0 4px !important;
+
+            color: #dbe7f5 !important;
+
+            font-size: 15px !important;
+        }
+
+
+        .recommendation-panel p {
+            margin: 0 !important;
+
+            color: #7f91a7 !important;
+
+            font-size: 11px !important;
+
+            line-height: 1.5 !important;
+        }
+
+
+        /* =================================================
+           MOBILE
+           ================================================= */
+
+        @media (max-width: 800px) {
+
+            .protection-action-panel {
+                grid-template-columns: 58px minmax(0, 1fr) !important;
+
+                gap: 16px !important;
+
+                padding: 20px !important;
+            }
+
+
+            .protection-action-icon {
+                width: 54px !important;
+
+                height: 54px !important;
+
+                font-size: 23px !important;
+            }
+
+
+            .protection-action-content h3 {
+                font-size: 25px !important;
+            }
+
+
+            .protection-severity {
+                grid-column: 2 !important;
+
+                padding-left: 0 !important;
+
+                padding-top: 12px !important;
+
+                border-left: none !important;
+
+                border-top: 1px solid #26374a !important;
+            }
+
+
+            .protection-disclaimer {
+                flex-direction: column !important;
+
+                gap: 6px !important;
+            }
+
+
+            .security-report-panel {
+                flex-direction: column !important;
+
+                align-items: stretch !important;
+
+                gap: 18px !important;
+            }
+
+
+            .report-button {
+                width: 100% !important;
+            }
+
+        }
+
+
+        @media (max-width: 520px) {
+
+            .protection-action-panel {
+                grid-template-columns: 1fr !important;
+            }
+
+
+            .protection-action-icon {
+                width: 52px !important;
+
+                height: 52px !important;
+            }
+
+
+            .protection-severity {
+                grid-column: 1 !important;
+            }
+
+
+            .security-report-content {
+                align-items: flex-start !important;
+            }
+
+
+            .recommendation-panel {
+                align-items: flex-start !important;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app-shell">
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛡️
+            </div>
+
+            <div>
+
+                <h1>
+                    PhishGuard
+                </h1>
+
+                <span>
+                    Security Intelligence
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="navigation">
+
+            <p class="nav-title">
+                COMMAND CENTER
+            </p>
+
+
+            <a
+                href="index.html"
+                class="nav-item"
+            >
+                <span>◈</span>
+                Dashboard
+            </a>
+
+
+            <a
+                href="analyze.html"
+                class="nav-item active"
+            >
+                <span>⌕</span>
+                Analyze URL
+            </a>
+
+
+            <a
+                href="history.html"
+                class="nav-item"
+            >
+                <span>◷</span>
+                Scan History
+            </a>
+
+
+            <a
+                href="reports.html"
+                class="nav-item"
+            >
+                <span>▤</span>
+                Security Reports
+            </a>
+
+
+            <p class="nav-title secondary-nav-title">
+                SYSTEM
+            </p>
+
+
+            <a
+                href="about.html"
+                class="nav-item"
+            >
+                <span>ⓘ</span>
+                About PhishGuard
+            </a>
+
+        </nav>
+
+
+        <div class="system-status">
+
+            <div class="status-dot"></div>
+
+            <div>
+
+                <strong>
+                    System Online
+                </strong>
+
+                <small>
+                    Protection engine active
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="sidebar-footer">
+            CYBERCLASH 2026
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             TOP BAR
+             ================================================= -->
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="page-kicker">
+                    SECURITY ANALYZER
+                </span>
+
+                <h2>
+                    URL Threat Investigation
+                </h2>
+
+            </div>
+
+
+            <div class="topbar-status">
+
+                <span class="live-indicator"></span>
+
+                ANALYSIS ENGINE READY
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             ANALYZER HERO
+             ================================================= -->
+
+        <section class="analyzer-intro">
+
+            <span class="hero-label">
+                PG-ANALYZER / URL INTELLIGENCE
+            </span>
+
+
+            <h3>
+                Investigate before
+                <br>
+                you trust the link.
+            </h3>
+
+
+            <p>
+                PhishGuard analyzes suspicious URLs across multiple
+                security layers including URL structure, connection
+                security, reputation, brand impersonation, redirects,
+                destination changes, and correlated threat indicators.
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             TARGET ACQUISITION
+             ================================================= -->
+
+        <section class="url-scanner">
+
+            <div class="scanner-heading">
+
+                <div>
+
+                    <span>
+                        TARGET ACQUISITION
+                    </span>
+
+                    <h3>
+                        Enter URL to investigate
+                    </h3>
+
+                </div>
+
+
+                <code>
+                    POST /analyze
+                </code>
+
+            </div>
+
+
+            <div class="url-input-wrapper">
+
+                <span class="url-prefix">
+                    URL
+                </span>
+
+
+                <input
+                    type="text"
+                    id="urlInput"
+                    placeholder="https://example.com/login"
+                    autocomplete="off"
+                    spellcheck="false"
+                >
+
+
+                <button
+                    id="analyzeButton"
+                    type="button"
+                >
+
+                    ANALYZE TARGET
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="scanner-status-row">
+
+                <p
+                    id="statusMessage"
+                    class="status-message"
+                >
+                    Ready for investigation.
+                </p>
+
+
+                <span class="scanner-security-note">
+                    HTTPS recommended
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             THREAT ASSESSMENT
+             ================================================= -->
+
+        <section class="analysis-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        THREAT ASSESSMENT
+                    </span>
+
+                    <h3>
+                        Investigation Overview
+                    </h3>
+
+                </div>
+
+
+                <span class="section-live">
+                    LIVE ANALYSIS
+                </span>
+
+            </div>
+
+
+            <div class="risk-layout">
+
+
+                <!-- RISK SCORE -->
+
+                <div class="risk-display">
+
+                    <span class="result-label">
+                        RISK SCORE
+                    </span>
+
+
+                    <div
+                        class="risk-number"
+                        id="riskScore"
+                    >
+                        --
+                    </div>
+
+
+                    <div class="risk-scale">
+                        / 100
+                    </div>
+
+
+                    <div
+                        id="riskLevel"
+                        class="risk-badge"
+                    >
+                        WAITING
+                    </div>
+
+                </div>
+
+
+                <!-- SECURITY VERDICT -->
+
+                <div class="threat-summary">
+
+                    <span class="result-label">
+                        SECURITY VERDICT
+                    </span>
+
+
+                    <h3 id="securityVerdict">
+                        No investigation performed
+                    </h3>
+
+
+                    <p id="securityMessage">
+                        Enter a URL above to begin a
+                        PhishGuard security investigation.
+                    </p>
+
+
+                    <div class="threat-summary-footer">
+
+                        <span>
+                            PHISHGUARD ASSESSMENT
+                        </span>
+
+
+                        <strong>
+                            AWAITING TARGET
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECURITY TELEMETRY
+             ================================================= -->
+
+        <section class="analysis-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        SECURITY TELEMETRY
+                    </span>
+
+                    <h3>
+                        Detection Signal Matrix
+                    </h3>
+
+                </div>
+
+
+                <span class="section-live">
+                    06 SIGNALS
+                </span>
+
+            </div>
+
+
+            <div
+                class="signal-grid"
+                id="securitySignals"
+            >
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        🔐
+                    </span>
+
+                    <div>
+
+                        <small>
+                            01 / CONNECTION
+                        </small>
+
+                        <strong id="httpsSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <small>
+                            02 / IP ADDRESS
+                        </small>
+
+                        <strong id="ipSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        ◈
+                    </span>
+
+                    <div>
+
+                        <small>
+                            03 / REPUTATION
+                        </small>
+
+                        <strong id="reputationSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        ◎
+                    </span>
+
+                    <div>
+
+                        <small>
+                            04 / BRAND ANALYSIS
+                        </small>
+
+                        <strong id="brandSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        ⇄
+                    </span>
+
+                    <div>
+
+                        <small>
+                            05 / REDIRECT CHAIN
+                        </small>
+
+                        <strong id="redirectSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="signal-card">
+
+                    <span class="signal-icon">
+                        ◌
+                    </span>
+
+                    <div>
+
+                        <small>
+                            06 / DESTINATION
+                        </small>
+
+                        <strong id="destinationSignal">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             EXPLAINABLE DETECTION
+             ================================================= -->
+
+        <section class="analysis-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        EXPLAINABLE DETECTION
+                    </span>
+
+                    <h3>
+                        Why was this URL flagged?
+                    </h3>
+
+                </div>
+
+
+                <span class="section-live">
+                    EVIDENCE
+                </span>
+
+            </div>
+
+
+            <div class="reasons-panel">
+
+                <div class="evidence-header">
+
+                    <span>
+                        DETECTION FINDINGS
+                    </span>
+
+
+                    <strong>
+                        PHISHGUARD ENGINE
+                    </strong>
+
+                </div>
+
+
+                <ul id="riskReasons">
+
+                    <li>
+                        No investigation performed yet.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DESTINATION INTELLIGENCE
+             ================================================= -->
+
+        <section class="analysis-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        DESTINATION INTELLIGENCE
+                    </span>
+
+                    <h3>
+                        Redirect &amp; Destination Trace
+                    </h3>
+
+                </div>
+
+
+                <span class="section-live">
+                    NETWORK TRACE
+                </span>
+
+            </div>
+
+
+            <div class="destination-panel">
+
+
+                <div class="destination-row">
+
+                    <span>
+                        01 / ORIGINAL URL
+                    </span>
+
+
+                    <strong id="originalURL">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="destination-arrow">
+                    ↓
+                </div>
+
+
+                <div class="destination-row">
+
+                    <span>
+                        02 / FINAL DESTINATION
+                    </span>
+
+
+                    <strong id="finalURL">
+                        —
+                    </strong>
+
+                </div>
+
+
+                <div class="destination-meta">
+
+                    <div>
+
+                        <small>
+                            REDIRECT COUNT
+                        </small>
+
+
+                        <strong id="redirectCount">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            DOMAIN CHANGED
+                        </small>
+
+
+                        <strong id="domainChanged">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <small>
+                            HTTPS DOWNGRADE
+                        </small>
+
+
+                        <strong id="downgradeStatus">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PROTECTION ENGINE
+             ================================================= -->
+
+        <section
+            class="analysis-section protection-engine-section"
+        >
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        PROTECTION ENGINE
+                    </span>
+
+
+                    <h3>
+                        Recommended Security Action
+                    </h3>
+
+                </div>
+
+
+                <span
+                    class="section-live"
+                    id="protectionStatusLabel"
+                >
+                    AWAITING ANALYSIS
+                </span>
+
+            </div>
+
+
+            <!-- PROTECTION DECISION CARD -->
+
+            <div
+                class="protection-action-panel"
+                id="protectionActionPanel"
+            >
+
+
+                <div class="protection-action-icon">
+                    🛡️
+                </div>
+
+
+                <div class="protection-action-content">
+
+                    <span>
+                        AUTOMATED PROTECTION DECISION
+                    </span>
+
+
+                    <h3 id="protectionAction">
+                        WAITING
+                    </h3>
+
+
+                    <p id="protectionMessage">
+                        Analyze a URL to receive the
+                        PhishGuard protection decision.
+                    </p>
+
+                </div>
+
+
+                <div class="protection-severity">
+
+                    <small>
+                        SEVERITY
+                    </small>
+
+
+                    <strong id="protectionSeverity">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- DECISION ENGINE NOTE -->
+
+            <div class="protection-disclaimer">
+
+                <span>
+                    PHISHGUARD DECISION ENGINE
+                </span>
+
+
+                <p>
+                    Protection actions are based on detected
+                    risk indicators and are intended to support
+                    safe investigation decisions. They do not
+                    guarantee that a destination is safe or
+                    malicious.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SECURITY REPORT
+             ================================================= -->
+
+        <section class="security-report-panel">
+
+
+            <div class="security-report-content">
+
+                <div class="security-report-icon">
+                    ▣
+                </div>
+
+
+                <div>
+
+                    <span>
+                        SECURITY REPORTING
+                    </span>
+
+
+                    <h3>
+                        Generate Investigation Report
+                    </h3>
+
+
+                    <p>
+                        Create a professional investigation report
+                        containing the current URL, risk assessment,
+                        detection findings, reputation intelligence,
+                        redirect activity, and destination analysis.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="generateReportButton"
+                class="report-button"
+                type="button"
+                disabled
+            >
+
+                GENERATE SECURITY REPORT
+
+                <span>
+                    ↓
+                </span>
+
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             PROTECTION RECOMMENDATION
+             ================================================= -->
+
+        <section class="recommendation-panel">
+
+
+            <div class="recommendation-icon">
+                🛡️
+            </div>
+
+
+            <div>
+
+                <span>
+                    PROTECTION RECOMMENDATION
+                </span>
+
+
+                <h3 id="recommendationTitle">
+                    Waiting for analysis
+                </h3>
+
+
+                <p id="recommendationText">
+                    Analyze a URL to receive a
+                    security recommendation.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="main-footer">
+
+            <span>
+                PhishGuard Security Intelligence Platform
+            </span>
+
+
+            <span>
+                CyberClash 2026
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+<script src="analyze.js"></script>
+
+</body>
+
+</html>

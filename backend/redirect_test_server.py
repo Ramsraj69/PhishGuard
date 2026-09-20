@@ -1,40 +1,27 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from flask import Flask, redirect
+
+app = Flask(__name__)
 
 
-class RedirectHandler(BaseHTTPRequestHandler):
+@app.route("/start")
+def start():
+    return redirect(
+        "http://127.0.0.1:8000/private",
+        code=302
+    )
 
-    def do_GET(self):
 
-        if self.path == "/start":
-            self.redirect("/step1")
-
-        elif self.path == "/step1":
-            self.redirect("/step2")
-
-        elif self.path == "/step2":
-            self.redirect("/final")
-
-        elif self.path == "/final":
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(b"Final destination reached.")
-
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-    def redirect(self, location):
-
-        self.send_response(302)
-        self.send_header("Location", location)
-        self.end_headers()
+@app.route("/private")
+def private():
+    return "PRIVATE SERVER REACHED"
 
 
 if __name__ == "__main__":
+    print("\nRedirect SSRF test server running at:")
+    print("http://localhost:8000/start\n")
 
-    server = HTTPServer(("localhost", 8000), RedirectHandler)
-
-    print("Redirect test server running at:")
-    print("http://localhost:8000/start")
-
-    server.serve_forever()
+    app.run(
+        host="0.0.0.0",
+        port=8000,
+        debug=False
+    )

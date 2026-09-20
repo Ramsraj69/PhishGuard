@@ -6,7 +6,7 @@ def parse_url(url):
 
     return {
         "scheme": parsed.scheme,
-        "domain": parsed.netloc,
+        "domain": parsed.hostname,
         "path": parsed.path,
         "query": parsed.query,
         "fragment": parsed.fragment

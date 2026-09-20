@@ -1,4 +1,5 @@
 import requests
+from unittest.mock import patch
 from url_security import validate_url_for_request
 
 
@@ -7,7 +8,6 @@ def check_redirects(url, max_redirects=5):
     redirect_chain = []
     current_url = url
 
-    # Validate the initial URL before making a request
     security_check = validate_url_for_request(current_url)
 
     if not security_check["allowed"]:
@@ -31,7 +31,7 @@ def check_redirects(url, max_redirects=5):
 
             redirect_chain.append(current_url)
 
-            # No redirect — final destination reached
+            # Final destination reached
             if response.status_code not in [301, 302, 303, 307, 308]:
 
                 return {
@@ -41,7 +41,6 @@ def check_redirects(url, max_redirects=5):
                     "too_many_redirects": False
                 }
 
-            # Get redirect destination
             next_url = response.headers.get("Location")
 
             if not next_url:
@@ -53,17 +52,18 @@ def check_redirects(url, max_redirects=5):
                     "too_many_redirects": False
                 }
 
-            # Build the next absolute URL
-            current_url = requests.compat.urljoin(
+            # Convert relative URL to absolute URL
+            next_url = requests.compat.urljoin(
                 current_url,
                 next_url
             )
 
-            # Validate the redirect destination
-            security_check = validate_url_for_request(current_url)
+            # SECURITY CHECK BEFORE FOLLOWING REDIRECT
+            security_check = validate_url_for_request(next_url)
 
             if not security_check["allowed"]:
-                redirect_chain.append(current_url)
+
+                redirect_chain.append(next_url)
 
                 return {
                     "redirect_count": len(redirect_chain) - 1,
@@ -73,17 +73,25 @@ def check_redirects(url, max_redirects=5):
                     "error": security_check["reason"]
                 }
 
+            current_url = next_url
+
         return {
-            "redirect_count": len(redirect_chain) - 1,
+            "redirect_count": max(
+                0,
+                len(redirect_chain) - 1
+            ),
             "redirect_chain": redirect_chain,
-            "final_url": current_url,
+            "final_url": None,
             "too_many_redirects": True
         }
 
     except requests.RequestException as e:
 
         return {
-            "redirect_count": len(redirect_chain) - 1,
+            "redirect_count": max(
+                0,
+                len(redirect_chain) - 1
+            ),
             "redirect_chain": redirect_chain,
             "final_url": None,
             "too_many_redirects": False,
@@ -91,22 +99,79 @@ def check_redirects(url, max_redirects=5):
         }
 
 
-if __name__ == "__main__":
+def run_normal_redirect_test():
 
-    test_url = "http://localhost:8000/start"
+    print("\n========== NORMAL REDIRECT TEST ==========\n")
+
+    test_url = "https://httpbin.org/redirect/2"
 
     result = check_redirects(test_url)
 
-    print("\n========== A18 SAFE REDIRECT TEST ==========\n")
     print("Redirect Count:", result["redirect_count"])
+
+    print("\nRedirect Chain:")
+
+    for url in result["redirect_chain"]:
+        print("-", url)
+
+    print("\nFinal URL:", result["final_url"])
+    print("Too Many Redirects:", result["too_many_redirects"])
+
+    if result.get("error"):
+        print("Error:", result["error"])
+
+
+def run_ssrf_redirect_test():
+
+    print("\n========== SSRF REDIRECT TEST ==========\n")
+
+    safe_url = "https://safe.example.com/start"
+    private_url = "http://127.0.0.1:8000/private"
+
+    class MockResponse:
+
+        status_code = 302
+
+        headers = {
+            "Location": private_url
+        }
+
+    def fake_get(*args, **kwargs):
+
+        return MockResponse()
+
+    with patch(
+        "redirect_check.requests.get",
+        side_effect=fake_get
+    ):
+
+        result = check_redirects(safe_url)
+
+    print("Starting URL:", safe_url)
+    print("Redirect Target:", private_url)
+
+    print("\nRedirect Count:", result["redirect_count"])
 
     print("Redirect Chain:")
 
     for url in result["redirect_chain"]:
         print("-", url)
 
-    print("Final URL:", result["final_url"])
+    print("\nFinal URL:", result["final_url"])
     print("Too Many Redirects:", result["too_many_redirects"])
+    print("Error:", result.get("error"))
 
-    if result.get("error"):
-        print("Error:", result["error"])
+    if result.get("error") == "Private or local network address blocked":
+
+        print("\nRESULT: SSRF REDIRECT BLOCKED SUCCESSFULLY")
+
+    else:
+
+        print("\nRESULT: SSRF TEST FAILED")
+
+
+if __name__ == "__main__":
+
+    run_normal_redirect_test()
+
+    run_ssrf_redirect_test()

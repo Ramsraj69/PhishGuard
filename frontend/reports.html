@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Security Reports | PhishGuard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #080b10;
+
+            color: #e8edf5;
+
+            min-height: 100vh;
+
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+
+            width: 250px;
+            height: 100vh;
+
+            background: #0d1118;
+
+            border-right:
+                1px solid rgba(255,255,255,0.07);
+
+            padding: 28px 18px;
+
+        }
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 45px;
+
+        }
+
+        .brand-icon {
+            font-size: 30px;
+        }
+
+        .brand-text {
+
+            font-size: 18px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+        }
+
+        .brand-subtitle {
+
+            font-size: 10px;
+
+            color: #788394;
+
+            letter-spacing: 0.16em;
+
+            margin-top: 3px;
+
+        }
+
+        .nav {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+
+        }
+
+        .nav a {
+
+            text-decoration: none;
+
+            color: #8791a1;
+
+            padding: 13px 14px;
+
+            border-radius: 7px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            transition: 0.2s;
+
+        }
+
+        .nav a:hover {
+
+            background:
+                rgba(255,255,255,0.04);
+
+            color: #ffffff;
+
+        }
+
+        .nav a.active {
+
+            background:
+                rgba(255,255,255,0.07);
+
+            color: #ffffff;
+
+            border-left:
+                3px solid #ffffff;
+
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+
+            margin-left: 250px;
+
+            min-height: 100vh;
+
+        }
+
+        .topbar {
+
+            height: 72px;
+
+            display: flex;
+
+            align-items: center;
+
+            padding: 0 40px;
+
+            border-bottom:
+                1px solid rgba(255,255,255,0.07);
+
+            background: #0a0e14;
+
+        }
+
+        .topbar-title {
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.16em;
+
+            color: #9ba5b5;
+
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+
+            padding: 42px;
+
+            max-width: 1450px;
+
+            margin: auto;
+
+        }
+
+        .eyebrow {
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.2em;
+
+            color: #758092;
+
+            margin-bottom: 10px;
+
+        }
+
+        h1 {
+
+            font-size: 38px;
+
+            letter-spacing: -0.03em;
+
+            margin-bottom: 12px;
+
+        }
+
+        .intro {
+
+            color: #8791a1;
+
+            max-width: 720px;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+
+            margin-bottom: 35px;
+
+        }
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stats-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-bottom: 28px;
+
+        }
+
+        .stat-card {
+
+            background: #0e131b;
+
+            border:
+                1px solid rgba(255,255,255,0.07);
+
+            border-radius: 10px;
+
+            padding: 24px;
+
+        }
+
+        .stat-label {
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.15em;
+
+            color: #788394;
+
+            margin-bottom: 14px;
+
+        }
+
+        .stat-card strong {
+
+            display: block;
+
+            font-size: 32px;
+
+            margin-bottom: 7px;
+
+        }
+
+        .stat-card span {
+
+            font-size: 11px;
+
+            color: #697484;
+
+        }
+
+        /* =====================================================
+           PANELS
+        ===================================================== */
+
+        .panel-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 18px;
+
+            margin-bottom: 18px;
+
+        }
+
+        .panel {
+
+            background: #0e131b;
+
+            border:
+                1px solid rgba(255,255,255,0.07);
+
+            border-radius: 10px;
+
+            padding: 26px;
+
+        }
+
+        .panel-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 25px;
+
+        }
+
+        .panel-header h2 {
+
+            font-size: 16px;
+
+            letter-spacing: 0.02em;
+
+        }
+
+        .panel-header span {
+
+            font-size: 10px;
+
+            color: #687383;
+
+            letter-spacing: 0.12em;
+
+        }
+
+        /* =====================================================
+           RISK DISTRIBUTION
+        ===================================================== */
+
+        .risk-item {
+            margin-bottom: 22px;
+        }
+
+        .risk-top {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 8px;
+
+        }
+
+        .risk-name {
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.12em;
+
+        }
+
+        .risk-count {
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #c4ccd8;
+
+        }
+
+        .risk-track {
+
+            height: 9px;
+
+            width: 100%;
+
+            background:
+                rgba(255,255,255,0.05);
+
+            border-radius: 20px;
+
+            overflow: hidden;
+
+        }
+
+        .risk-bar {
+
+            height: 100%;
+
+            width: 0%;
+
+            border-radius: 20px;
+
+            transition:
+                width 0.7s ease;
+
+        }
+
+        .low-bar {
+            background: #45d98a;
+        }
+
+        .medium-bar {
+            background: #ffb34d;
+        }
+
+        .high-bar {
+            background: #ff5d5d;
+        }
+
+        /* =====================================================
+           RISK TREND
+        ===================================================== */
+
+        .trend-panel {
+
+            margin-bottom: 18px;
+
+        }
+
+        .trend-container {
+
+            position: relative;
+
+            height: 240px;
+
+            padding:
+                18px 12px 12px 12px;
+
+            border:
+                1px solid rgba(255,255,255,0.05);
+
+            border-radius: 8px;
+
+            background:
+                rgba(255,255,255,0.012);
+
+            overflow-x: auto;
+
+        }
+
+        .trend-chart {
+
+            position: relative;
+
+            min-width: 560px;
+
+            height: 190px;
+
+        }
+
+        .trend-grid-line {
+
+            position: absolute;
+
+            left: 45px;
+
+            right: 10px;
+
+            height: 1px;
+
+            background:
+                rgba(255,255,255,0.06);
+
+        }
+
+        .trend-grid-label {
+
+            position: absolute;
+
+            left: 0;
+
+            width: 35px;
+
+            font-size: 9px;
+
+            color: #687383;
+
+            text-align: right;
+
+        }
+
+        .trend-line {
+
+            position: absolute;
+
+            left: 45px;
+
+            right: 10px;
+
+            top: 0;
+
+            bottom: 25px;
+
+        }
+
+        .trend-svg {
+
+            width: 100%;
+
+            height: 100%;
+
+            overflow: visible;
+
+        }
+
+        .trend-path {
+
+            fill: none;
+
+            stroke: #ffffff;
+
+            stroke-width: 2.5;
+
+            stroke-linecap: round;
+
+            stroke-linejoin: round;
+
+        }
+
+        .trend-point {
+
+            fill: #ffffff;
+
+            stroke: #0e131b;
+
+            stroke-width: 3;
+
+        }
+
+        .trend-label {
+
+            position: absolute;
+
+            bottom: 0;
+
+            transform: translateX(-50%);
+
+            font-size: 9px;
+
+            color: #687383;
+
+            white-space: nowrap;
+
+        }
+
+        .trend-empty {
+
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: #687383;
+
+            font-size: 12px;
+
+        }
+
+        /* =====================================================
+           SECURITY SUMMARY
+        ===================================================== */
+
+        .summary-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+        }
+
+        .summary-item {
+
+            padding: 17px;
+
+            border:
+                1px solid rgba(255,255,255,0.06);
+
+            border-radius: 7px;
+
+            background:
+                rgba(255,255,255,0.015);
+
+        }
+
+        .summary-label {
+
+            display: block;
+
+            font-size: 10px;
+
+            color: #727d8d;
+
+            letter-spacing: 0.12em;
+
+            margin-bottom: 8px;
+
+        }
+
+        .summary-value {
+
+            font-size: 20px;
+
+            font-weight: 800;
+
+        }
+
+        /* =====================================================
+           PRIORITY INVESTIGATION
+        ===================================================== */
+
+        .priority-panel {
+            margin-top: 18px;
+        }
+
+        .priority-box {
+
+            border:
+                1px solid rgba(255,255,255,0.07);
+
+            background: #0a0f15;
+
+            border-radius: 8px;
+
+            padding: 24px;
+
+        }
+
+        .priority-label {
+
+            font-size: 10px;
+
+            color: #707b8c;
+
+            letter-spacing: 0.16em;
+
+            margin-bottom: 12px;
+
+        }
+
+        .highest-risk-url {
+
+            font-size: 15px;
+
+            font-weight: 700;
+
+            word-break: break-all;
+
+            line-height: 1.6;
+
+            margin-bottom: 12px;
+
+        }
+
+        .highest-risk-score {
+
+            display: inline-block;
+
+            padding: 7px 11px;
+
+            border-radius: 5px;
+
+            background:
+                rgba(255,180,70,0.12);
+
+            border:
+                1px solid rgba(255,180,70,0.28);
+
+            color: #ffbd66;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 0.08em;
+
+        }
+
+        /* =====================================================
+           EMPTY REPORT
+        ===================================================== */
+
+        #reportEmpty {
+
+            display: none;
+
+            padding: 25px;
+
+            margin-top: 18px;
+
+            border:
+                1px dashed rgba(255,255,255,0.1);
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            color: #707b8c;
+
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+
+            margin-top: 45px;
+
+            padding: 25px 0;
+
+            border-top:
+                1px solid rgba(255,255,255,0.06);
+
+            color: #596373;
+
+            font-size: 10px;
+
+            letter-spacing: 0.1em;
+
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1050px) {
+
+            .stats-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+        }
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                position: relative;
+
+                width: 100%;
+
+                height: auto;
+
+                border-right: none;
+
+                border-bottom:
+                    1px solid rgba(255,255,255,0.07);
+
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .panel-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🛡️
+            </div>
+
+            <div>
+
+                <div class="brand-text">
+                    PhishGuard
+                </div>
+
+                <div class="brand-subtitle">
+                    SECURITY INTELLIGENCE
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <a href="index.html">
+                ◈ Dashboard
+            </a>
+
+            <a href="analyze.html">
+                ⌕ Analyze URL
+            </a>
+
+            <a href="history.html">
+                ◷ Scan History
+            </a>
+
+            <a
+                href="reports.html"
+                class="active"
+            >
+                ▤ Security Reports
+            </a>
+
+            <a href="about.html">
+                ⓘ About PhishGuard
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="main">
+
+
+        <header class="topbar">
+
+            <div class="topbar-title">
+                SECURITY REPORTING /
+                THREAT INTELLIGENCE REPORTS
+            </div>
+
+        </header>
+
+
+        <section class="content">
+
+
+            <div class="eyebrow">
+                PHISHGUARD INTELLIGENCE
+            </div>
+
+
+            <h1>
+                Security Investigation Reports
+            </h1>
+
+
+            <p class="intro">
+
+                Review aggregated results from your URL
+                investigations. PhishGuard summarizes risk
+                levels, detection activity, and the
+                highest-risk destinations identified by the
+                local analysis engine.
+
+            </p>
+
+
+            <!-- =================================================
+                 STATISTICS
+            ================================================= -->
+
+            <div class="stats-grid">
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        TOTAL INVESTIGATIONS
+                    </div>
+
+                    <strong id="reportTotal">
+                        —
+                    </strong>
+
+                    <span>
+                        Recorded URL analyses
+                    </span>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        THREATS DETECTED
+                    </div>
+
+                    <strong id="reportThreats">
+                        —
+                    </strong>
+
+                    <span>
+                        Medium and high risk
+                    </span>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        SAFE ANALYSES
+                    </div>
+
+                    <strong id="reportSafe">
+                        —
+                    </strong>
+
+                    <span>
+                        Low risk results
+                    </span>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        AVERAGE RISK
+                    </div>
+
+                    <strong id="reportAverage">
+                        —
+                    </strong>
+
+                    <span>
+                        Across recorded scans
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 RISK DISTRIBUTION + SECURITY SUMMARY
+            ================================================= -->
+
+            <div class="panel-grid">
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Detection Levels
+                        </h2>
+
+                        <span>
+                            RISK DISTRIBUTION
+                        </span>
+
+                    </div>
+
+
+                    <div class="risk-item">
+
+                        <div class="risk-top">
+
+                            <span class="risk-name">
+                                LOW
+                            </span>
+
+                            <span
+                                class="risk-count"
+                                id="lowRiskCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="risk-track">
+
+                            <div
+                                class="risk-bar low-bar"
+                                id="lowRiskBar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="risk-item">
+
+                        <div class="risk-top">
+
+                            <span class="risk-name">
+                                MEDIUM
+                            </span>
+
+                            <span
+                                class="risk-count"
+                                id="mediumRiskCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="risk-track">
+
+                            <div
+                                class="risk-bar medium-bar"
+                                id="mediumRiskBar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="risk-item">
+
+                        <div class="risk-top">
+
+                            <span class="risk-name">
+                                HIGH
+                            </span>
+
+                            <span
+                                class="risk-count"
+                                id="highRiskCount"
+                            >
+                                0
+                            </span>
+
+                        </div>
+
+
+                        <div class="risk-track">
+
+                            <div
+                                class="risk-bar high-bar"
+                                id="highRiskBar"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h2>
+                            Investigation Overview
+                        </h2>
+
+                        <span>
+                            SECURITY SUMMARY
+                        </span>
+
+                    </div>
+
+
+                    <div class="summary-grid">
+
+
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                DETECTION COVERAGE
+                            </span>
+
+                            <strong
+                                class="summary-value"
+                                id="summaryThreatRate"
+                            >
+                                0%
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                HIGHEST RISK SCORE
+                            </span>
+
+                            <strong
+                                class="summary-value"
+                                id="summaryHighestScore"
+                            >
+                                0/100
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                LOWEST RISK SCORE
+                            </span>
+
+                            <strong
+                                class="summary-value"
+                                id="summaryLowestScore"
+                            >
+                                0/100
+                            </strong>
+
+                        </div>
+
+
+                        <div class="summary-item">
+
+                            <span class="summary-label">
+                                ENGINE STATUS
+                            </span>
+
+                            <strong class="summary-value">
+                                ACTIVE
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 INVESTIGATION RISK TREND
+            ================================================= -->
+
+            <div class="panel trend-panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        Investigation Risk Trend
+                    </h2>
+
+                    <span>
+                        RECENT ANALYSIS SCORES
+                    </span>
+
+                </div>
+
+
+                <div class="trend-container">
+
+                    <div
+                        id="trendChart"
+                        class="trend-chart"
+                    >
+
+                        <div class="trend-grid-line" style="top: 0%;"></div>
+                        <div class="trend-grid-line" style="top: 25%;"></div>
+                        <div class="trend-grid-line" style="top: 50%;"></div>
+                        <div class="trend-grid-line" style="top: 75%;"></div>
+                        <div class="trend-grid-line" style="top: 100%;"></div>
+
+
+                        <div
+                            class="trend-grid-label"
+                            style="top: -4px;"
+                        >
+                            100
+                        </div>
+
+                        <div
+                            class="trend-grid-label"
+                            style="top: 25%;"
+                        >
+                            75
+                        </div>
+
+                        <div
+                            class="trend-grid-label"
+                            style="top: 50%;"
+                        >
+                            50
+                        </div>
+
+                        <div
+                            class="trend-grid-label"
+                            style="top: 75%;"
+                        >
+                            25
+                        </div>
+
+                        <div
+                            class="trend-grid-label"
+                            style="top: calc(100% - 10px);"
+                        >
+                            0
+                        </div>
+
+
+                        <div
+                            id="trendLine"
+                            class="trend-line"
+                        >
+
+                            <div
+                                id="trendEmpty"
+                                class="trend-empty"
+                            >
+                                No investigation data available yet.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 PRIORITY INVESTIGATION
+            ================================================= -->
+
+            <div class="panel priority-panel">
+
+
+                <div class="panel-header">
+
+                    <h2>
+                        Highest Risk Destination
+                    </h2>
+
+                    <span>
+                        PRIORITY INVESTIGATION
+                    </span>
+
+                </div>
+
+
+                <div class="priority-box">
+
+                    <div class="priority-label">
+                        HIGHEST-RISK URL IDENTIFIED
+                    </div>
+
+
+                    <div id="highestRiskContent">
+
+                        <p>
+                            No investigation data available yet.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 EMPTY REPORT
+            ================================================= -->
+
+            <div id="reportEmpty">
+
+                No investigation data available yet.
+
+                <br><br>
+
+                Analyze a URL to begin generating
+                security intelligence reports.
+
+            </div>
+
+
+            <footer>
+
+                PhishGuard Security Intelligence Platform
+                · CyberClash 2026
+
+            </footer>
+
+
+        </section>
+
+    </main>
+
+
+    <script src="reports.js"></script>
+
+
+</body>
+
+</html>

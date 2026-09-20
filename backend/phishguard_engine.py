@@ -70,6 +70,8 @@ def analyze_url(url):
 
     signals = {
         "long_url": url_features["long_url"],
+        "punycode": brand_analysis["punycode"],
+        "unicode_confusable": brand_analysis["unicode_confusable"],
         "at_symbol": url_features["at_symbol"],
         "deceptive_at_pattern": url_features["deceptive_at_pattern"],
         "unusual_port": host_analysis["unusual_port"],
@@ -126,7 +128,7 @@ if __name__ == "__main__":
         "http://google.com@evil-example.com/login",
         "https://google.com@evil-example.com/login",
         "https://google.com@evil-example.com/account/login",
-            "https://example.com:4444/login"
+        "https://example.com:4444/login"
     ]
 
     for test_url in test_urls:
